@@ -54,35 +54,30 @@ regd_users.post("/login", (req,res) => {
 // Add a book review
 regd_users.put("/auth/review/:isbn", (req, res) => {
   //Write your code here
-  let isbn = req.params.isbn;
-  let book = books[isbn];
-  let review = book["reviews"];
-  let qryreview = req.query.review;
-  let username = req.body.username;
+  const isbn = req.params.isbn;
+  const username = req.session.authorization.username;
+  const review = req.body.review;
 
-   if(qryreview)
-   {
-        review[username] = qryreview;
-   }
-   book["reviews"] = review;
-   books[isbn]["reviews"] = book["reviews"];
-
-   res.send(JSON.stringify({review}, null,4));
+  if (books[isbn]) {
+    books[isbn].reviews[username] = { "review": review };  
+    return res.status(200).send("review successfully submit");
+  }
+   return res.status(404).json({ error: "Book not found" });
+    
+    
 });
 
 // Delete review by isbn
 regd_users.delete("/auth/review/:isbn", (req, res) => {
-  // Update the code here
+  const isbn = req.params.isbn;
+  const username = req.session.authorization.username;
+  if (books[isbn] && books[isbn].reviews[username]) {
+      delete books[isbn].reviews[username];
+      return res.status(200).send("review successfully delete");
+  }
+  
+  return res.status(404).json({ error: "Review not found" });
 
-  let isbn = req.params.isbn;
-  let book = books[isbn];
-  let review = book["reviews"];
-  let username = req.body.username;
-  if(username)
-   {
-        delete review[username];
-   }
-   return res.status(208).json({message: "The review for the  ISBN "+isbn+" posted by the user "+username+" has been deleted."});  
 });
 
 module.exports.authenticated = regd_users;
