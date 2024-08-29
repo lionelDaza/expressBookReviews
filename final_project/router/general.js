@@ -20,11 +20,25 @@ public_users.post("/register", (req,res) => {
   return res.status(404).json({message: "Unable to register user."});
 });
 
-// Get the book list available in the shop DONE
+// // Get the book list available in the shop DONE
+// public_users.get('/',function (req, res) {
+//   //Write your code here
+//   return res.send(JSON.stringify({books}, null, 4));
+//   // return res.status(300).json({message: "Yet to be implemented"});
+// });
+
+// Get the book list available in the shop using promise
 public_users.get('/',function (req, res) {
-  //Write your code here
-  return res.send(JSON.stringify({books}, null, 4));
-  // return res.status(300).json({message: "Yet to be implemented"});
+ 
+  let myPromise = new Promise((resolve,reject) => {
+  setTimeout(() => {
+      resolve("Promise resolved")
+  },6000)})
+  
+  myPromise.then((successMessage) => {
+      console.log("callback " + successMessage)
+      res.send(JSON.stringify({books},null, 4));
+  })
 });
 
 // Get book details based on ISBN
